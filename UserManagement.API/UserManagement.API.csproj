@@ -21,6 +21,8 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Core\Entities\" />
+    <Folder Include="Core\Interfaces\" />
   </ItemGroup>
 
 </Project>
