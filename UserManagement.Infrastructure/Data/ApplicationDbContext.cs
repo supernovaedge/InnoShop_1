@@ -54,4 +54,3 @@ namespace UserManagement.Infrastructure.Data
         }
     }
 }
-
