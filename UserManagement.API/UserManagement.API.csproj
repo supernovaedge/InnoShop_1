@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
@@ -22,11 +21,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="API\Configurations\" />
     <Folder Include="Application\Interfaces\" />
     <Folder Include="Application\Services\" />
-    <Folder Include="Controllers\" />
+    <Folder Include="API\Controllers\" />
     <Folder Include="Core\Entities\" />
     <Folder Include="Core\Interfaces\" />
+    <Folder Include="Infrastructure\Identity\" />
     <Folder Include="Infrastructure\Repositories\" />
   </ItemGroup>
 
