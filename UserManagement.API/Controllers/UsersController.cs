@@ -94,7 +94,6 @@ namespace UserManagement.API.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
-
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserDto updateUserDto)
@@ -143,6 +142,71 @@ namespace UserManagement.API.Controllers
             }
 
             return BadRequest("Error confirming email.");
+        }
+
+        [HttpPost("RequestPasswordReset")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] PasswordResetRequestDto passwordResetRequestDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var mailAddress = new System.Net.Mail.MailAddress(passwordResetRequestDto.Email);
+            }
+            catch (FormatException)
+            {
+                return BadRequest("Invalid email format.");
+            }
+
+            var user = await _userManager.FindByEmailAsync(passwordResetRequestDto.Email);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetLink = Url.Action(nameof(ResetPassword), "Users", new { token, email = user.Email }, Request.Scheme);
+
+            var emailBody = $"Please reset your password by clicking this link: <a href='{HtmlEncoder.Default.Encode(resetLink)}'>link</a>{HtmlEncoder.Default.Encode(token)}";
+
+            await _emailSender.SendEmailAsync(user.Email, "Reset your password", emailBody);
+
+            return Ok("Password reset link has been sent to your email.");
+        }
+
+
+
+        [HttpPost("ResetPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
+            if (result.Succeeded)
+            {
+                return Ok("Password has been reset successfully.");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return BadRequest(ModelState);
         }
     }
 }
