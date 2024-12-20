@@ -11,7 +11,9 @@ using UserManagement.Infrastructure.Repositories;
 using Microsoft.OpenApi.Models;
 using AutoMapper;
 using UserManagement.Application.Mapping;
-
+using UserManagement.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,8 +53,23 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddJwtConfiguration(builder.Configuration);
+
+// Register the EmailSender service
+builder.Services.AddTransient<IEmailSender>(sp => new EmailSender(
+    builder.Configuration["EmailSettings:SmtpServer"],
+    int.Parse(builder.Configuration["EmailSettings:SmtpPort"]),
+    builder.Configuration["EmailSettings:SmtpUser"],
+    builder.Configuration["EmailSettings:SmtpPass"]
+));
+
+// Register DataSeeder
+builder.Services.AddTransient<DataSeeder>();
 
 builder.Services.AddCors(options =>
 {
@@ -80,5 +97,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Call the seeding method
+using (var scope = app.Services.CreateScope())
+{
+    var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+    await dataSeeder.SeedAsync();
+}
 
 app.Run();
