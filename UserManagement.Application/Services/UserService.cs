@@ -1,8 +1,8 @@
 using AutoMapper;
 using UserManagement.Application.DTOs;
 using UserManagement.Application.Interfaces;
-using UserManagement.Core.Entities;
 using UserManagement.Core.Interfaces;
+using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.Services
 {
