@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using UserManagement.Core.Entities;
 using UserManagement.Core.Interfaces;
+using UserManagement.Domain.Entities;
 using UserManagement.Infrastructure.Data;
 
 namespace UserManagement.Infrastructure.Repositories

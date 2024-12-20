@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using UserManagement.Core.Entities;
+using UserManagement.Domain.Entities;
 
 namespace UserManagement.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -22,7 +22,7 @@ namespace UserManagement.Infrastructure.Data
                 entity.ToTable(name: "Users");
             });
 
-            builder.Entity<IdentityRole<Guid>>(entity =>
+            builder.Entity<Role>(entity =>
             {
                 entity.ToTable(name: "Roles");
             });
@@ -54,3 +54,9 @@ namespace UserManagement.Infrastructure.Data
         }
     }
 }
+
+
+
+
+
+

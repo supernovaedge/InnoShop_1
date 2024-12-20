@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using UserManagement.Core.Entities;
+using UserManagement.Domain.Entities;
 using UserManagement.Infrastructure.Data;
 
 namespace UserManagement.Infrastructure.Identity

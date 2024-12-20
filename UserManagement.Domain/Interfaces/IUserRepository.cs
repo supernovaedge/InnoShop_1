@@ -1,4 +1,4 @@
-using UserManagement.Core.Entities;
+using UserManagement.Domain.Entities;
 
 namespace UserManagement.Core.Interfaces
 {
