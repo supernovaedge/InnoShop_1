@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ProductManagement.Application.DTOs;
+using ProductManagement.Application.Interfaces;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
 
 namespace ProductManagement.API.Controllers
 {
@@ -77,6 +81,13 @@ namespace ProductManagement.API.Controllers
             if (!deleted)
                 return NotFound();
             return NoContent();
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProducts([FromQuery] string? name, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice, [FromQuery] bool? availability)
+        {
+            var products = await _productService.SearchProductsAsync(name, minPrice, maxPrice, availability);
+            return Ok(products);
         }
 
         private Guid GetUserIdFromClaims()
