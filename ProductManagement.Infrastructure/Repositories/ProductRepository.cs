@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProductManagement.Application.Interfaces;
 using ProductManagement.Domain.Entities;
 using ProductManagement.Infrastructure.Data;
@@ -12,10 +13,12 @@ namespace ProductManagement.Infrastructure.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly ProductManagementDbContext _context;
+        private readonly ILogger<ProductRepository> _logger;
 
-        public ProductRepository(ProductManagementDbContext context)
+        public ProductRepository(ProductManagementDbContext context, ILogger<ProductRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task AddAsync(Product product)
@@ -66,15 +69,40 @@ namespace ProductManagement.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task SoftDeleteAsync(Guid id)
+        public async Task SoftDeleteByUserIdAsync(Guid userId)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (product != null && !product.IsDeleted)
+            var products = await _context.Products
+                .Where(p => p.UserId == userId && !p.IsDeleted)
+                .ToListAsync();
+
+            foreach (var product in products)
             {
                 product.IsDeleted = true;
-                _context.Products.Update(product);
-                await _context.SaveChangesAsync();
             }
+
+            _context.Products.UpdateRange(products);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RestoreByUserIdAsync(Guid userId)
+        {
+            var products = await _context.Products
+                .IgnoreQueryFilters()
+                .Where(p => p.UserId == userId && p.IsDeleted)
+                .ToListAsync();
+
+            if (products == null || !products.Any())
+            {
+                return;
+            }
+
+            foreach (var product in products)
+            {
+                product.IsDeleted = false;
+            }
+
+            _context.Products.UpdateRange(products);
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Product product)

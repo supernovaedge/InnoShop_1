@@ -12,6 +12,7 @@ namespace ProductManagement.Application.Interfaces
         Task<IEnumerable<Product>> SearchAsync(string? name, decimal? minPrice, decimal? maxPrice, bool? availability);
         Task AddAsync(Product product);
         Task UpdateAsync(Product product);
-        Task SoftDeleteAsync(Guid id);
+        Task SoftDeleteByUserIdAsync(Guid id);
+        Task RestoreByUserIdAsync(Guid id);
     }
 }
