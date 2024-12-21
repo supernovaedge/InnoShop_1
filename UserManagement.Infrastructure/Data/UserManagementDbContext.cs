@@ -5,9 +5,9 @@ using UserManagement.Domain.Entities;
 
 namespace UserManagement.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
+    public class UserManagementDbContext : IdentityDbContext<User, Role, Guid>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public UserManagementDbContext(DbContextOptions<UserManagementDbContext> options)
             : base(options)
         {
         }

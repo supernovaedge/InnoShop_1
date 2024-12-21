@@ -10,7 +10,7 @@ namespace UserManagement.Infrastructure.Identity
         public static IServiceCollection AddIdentitySetup(this IServiceCollection services)
         {
             services.AddIdentity<User, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddEntityFrameworkStores<UserManagementDbContext>()
                 .AddDefaultTokenProviders();
 
             return services;

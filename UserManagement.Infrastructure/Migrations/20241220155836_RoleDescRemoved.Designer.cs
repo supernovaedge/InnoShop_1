@@ -11,7 +11,7 @@ using UserManagement.Infrastructure.Data;
 
 namespace UserManagement.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(UserManagementDbContext))]
     [Migration("20241220155836_RoleDescRemoved")]
     partial class RoleDescRemoved
     {
