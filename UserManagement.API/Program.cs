@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using UserManagement.Application.Interfaces;
 using UserManagement.Application.Services;
 using UserManagement.Infrastructure.Data;
@@ -50,11 +47,11 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<UserManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentity<User, Role>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<UserManagementDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
