@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductManagement.Application.Interfaces;
 using ProductManagement.Domain.Entities;
+using ProductManagement.Infrastructure.Data;
 
 namespace ProductManagement.Infrastructure.Repositories
 {
