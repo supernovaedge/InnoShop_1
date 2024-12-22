@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace ProductManagement.API.Controllers
 {
@@ -15,10 +16,12 @@ namespace ProductManagement.API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly ProblemDetailsFactory _problemDetailsFactory;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, ProblemDetailsFactory problemDetailsFactory)
         {
             _productService = productService;
+            _problemDetailsFactory = problemDetailsFactory;
         }
 
         [HttpGet]
@@ -33,7 +36,7 @@ namespace ProductManagement.API.Controllers
         {
             var product = await _productService.GetProductByIdAsync(id);
             if (product == null)
-                return NotFound();
+                return NotFound(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status404NotFound, "Product not found"));
             return Ok(product);
         }
 
@@ -41,11 +44,11 @@ namespace ProductManagement.API.Controllers
         public async Task<IActionResult> CreateProduct([FromBody] ProductCreateDto productCreateDto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
 
             var userId = GetUserIdFromClaims();
             if (userId == Guid.Empty)
-                return Unauthorized();
+                return Unauthorized(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status401Unauthorized, "Unauthorized"));
 
             var createdProduct = await _productService.CreateProductAsync(productCreateDto, userId);
             return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.Id }, createdProduct);
@@ -55,18 +58,18 @@ namespace ProductManagement.API.Controllers
         public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ProductUpdateDto productUpdateDto)
         {
             if (id != productUpdateDto.Id)
-                return BadRequest();
+                return BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status400BadRequest, "Product ID mismatch"));
 
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
 
             var userId = GetUserIdFromClaims();
             if (userId == Guid.Empty)
-                return Unauthorized();
+                return Unauthorized(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status401Unauthorized, "Unauthorized"));
 
             var updated = await _productService.UpdateProductAsync(productUpdateDto, userId);
             if (!updated)
-                return NotFound();
+                return NotFound(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status404NotFound, "Product not found"));
             return NoContent();
         }
 
@@ -75,11 +78,11 @@ namespace ProductManagement.API.Controllers
         {
             var userId = GetUserIdFromClaims();
             if (userId == Guid.Empty)
-                return Unauthorized();
+                return Unauthorized(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status401Unauthorized, "Unauthorized"));
 
             var deleted = await _productService.DeleteProductAsync(id, userId);
             if (!deleted)
-                return NotFound();
+                return NotFound(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status404NotFound, "Product not found"));
             return NoContent();
         }
 
@@ -97,3 +100,4 @@ namespace ProductManagement.API.Controllers
         }
     }
 }
+
