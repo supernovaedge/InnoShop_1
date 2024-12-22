@@ -15,6 +15,8 @@ using ProductManagement.Application.Interfaces;
 using ProductManagement.Infrastructure.Repositories;
 using ProductManagement.Infrastructure.Data;
 using UserManagement.Infrastructure.Identity;
+using FluentValidation.AspNetCore;
+using UserManagement.Application.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +60,8 @@ builder.Services.AddDbContext<UserManagementDbContext>(options =>
 builder.Services.AddDbContext<ProductManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserDtoValidator>());
 builder.Services.AddIdentitySetup();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
