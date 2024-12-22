@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -5,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using ProductManagement.Application.Interfaces;
 using ProductManagement.Application.Mapping;
 using ProductManagement.Application.Services;
+using ProductManagement.Application.Validators;
 using ProductManagement.Infrastructure.Data;
 using ProductManagement.Infrastructure.Repositories;
 using System.Text;
@@ -18,7 +20,11 @@ builder.Services.AddDbContext<ProductManagementDbContext>(options =>
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-
+builder.Services.AddControllers()
+    .AddFluentValidation(fv =>
+    {
+        fv.RegisterValidatorsFromAssemblyContaining<ProductUpdateDtoValidator>();
+    });
 builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
 
 
