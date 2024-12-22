@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UserManagement.Application.DTOs;
 using UserManagement.Domain.Entities;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace UserManagement.API.Controllers
 {
@@ -21,13 +22,15 @@ namespace UserManagement.API.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ILogger<LoginController> _logger;
+        private readonly ProblemDetailsFactory _problemDetailsFactory;
 
-        public LoginController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, ILogger<LoginController> logger)
+        public LoginController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration, ILogger<LoginController> logger, ProblemDetailsFactory problemDetailsFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _logger = logger;
+            _problemDetailsFactory = problemDetailsFactory;
         }
 
         [HttpPost]
@@ -36,7 +39,7 @@ namespace UserManagement.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
             }
 
             _logger.LogInformation("Attempting to find user by email: {Email}", loginDto.Email);
@@ -44,7 +47,7 @@ namespace UserManagement.API.Controllers
             if (user == null)
             {
                 _logger.LogWarning("User not found with email: {Email}", loginDto.Email);
-                return Unauthorized();
+                return Unauthorized(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status401Unauthorized, "Invalid email or password"));
             }
 
             _logger.LogInformation("User found: {UserId}", user.Id);
@@ -52,7 +55,7 @@ namespace UserManagement.API.Controllers
             if (!result.Succeeded)
             {
                 _logger.LogWarning("Invalid password for user: {UserId}", user.Id);
-                return Unauthorized();
+                return Unauthorized(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status401Unauthorized, "Invalid email or password"));
             }
 
             await _signInManager.SignInAsync(user, isPersistent: false);
@@ -89,4 +92,3 @@ namespace UserManagement.API.Controllers
         }
     }
 }
-

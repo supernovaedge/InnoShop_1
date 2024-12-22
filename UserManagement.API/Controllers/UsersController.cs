@@ -6,6 +6,7 @@ using UserManagement.Application.Interfaces;
 using UserManagement.Domain.Entities;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace UserManagement.API.Controllers
 {
@@ -17,12 +18,14 @@ namespace UserManagement.API.Controllers
         private readonly IUserService _userService;
         private readonly UserManager<User> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly ProblemDetailsFactory _problemDetailsFactory;
 
-        public UsersController(IUserService userService, UserManager<User> userManager, IEmailSender emailSender)
+        public UsersController(IUserService userService, UserManager<User> userManager, IEmailSender emailSender, ProblemDetailsFactory problemDetailsFactory)
         {
             _userService = userService;
             _userManager = userManager;
             _emailSender = emailSender;
+            _problemDetailsFactory = problemDetailsFactory;
         }
 
         [HttpGet("{id}")]
@@ -32,7 +35,7 @@ namespace UserManagement.API.Controllers
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status404NotFound, "User not found"));
             }
             return Ok(user);
         }
@@ -51,7 +54,7 @@ namespace UserManagement.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
             }
 
             var user = new User
@@ -71,7 +74,7 @@ namespace UserManagement.API.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
             }
 
             var roleResult = await _userManager.AddToRoleAsync(user, createUserDto.Role);
@@ -81,7 +84,7 @@ namespace UserManagement.API.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -100,12 +103,12 @@ namespace UserManagement.API.Controllers
         {
             if (id != updateUserDto.Id)
             {
-                return BadRequest();
+                return BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status400BadRequest, "User ID mismatch"));
             }
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
             }
 
             await _userService.UpdateUserAsync(updateUserDto);
@@ -126,13 +129,13 @@ namespace UserManagement.API.Controllers
         {
             if (userId == Guid.Empty || string.IsNullOrWhiteSpace(token))
             {
-                return BadRequest();
+                return BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status400BadRequest, "Invalid user ID or token"));
             }
 
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
             {
-                return NotFound();
+                return NotFound(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status404NotFound, "User not found"));
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
@@ -141,7 +144,7 @@ namespace UserManagement.API.Controllers
                 return Ok("Email confirmed successfully!");
             }
 
-            return BadRequest("Error confirming email.");
+            return BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status400BadRequest, "Error confirming email"));
         }
 
         [HttpPost("RequestPasswordReset")]
@@ -150,7 +153,7 @@ namespace UserManagement.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
             }
 
             try
@@ -159,13 +162,13 @@ namespace UserManagement.API.Controllers
             }
             catch (FormatException)
             {
-                return BadRequest("Invalid email format.");
+                return BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status400BadRequest, "Invalid email format"));
             }
 
             var user = await _userManager.FindByEmailAsync(passwordResetRequestDto.Email);
             if (user == null)
             {
-                return NotFound("User not found.");
+                return NotFound(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status404NotFound, "User not found"));
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -178,21 +181,19 @@ namespace UserManagement.API.Controllers
             return Ok("Password reset link has been sent to your email.");
         }
 
-
-
         [HttpPost("ResetPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
             }
 
             var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
             if (user == null)
             {
-                return NotFound("User not found.");
+                return NotFound(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status404NotFound, "User not found"));
             }
 
             var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
@@ -206,7 +207,7 @@ namespace UserManagement.API.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
         }
     }
 }

@@ -17,12 +17,17 @@ using ProductManagement.Infrastructure.Data;
 using UserManagement.Infrastructure.Identity;
 using FluentValidation.AspNetCore;
 using UserManagement.Application.Validators;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserDtoValidator>());
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -60,8 +65,6 @@ builder.Services.AddDbContext<UserManagementDbContext>(options =>
 builder.Services.AddDbContext<ProductManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserDtoValidator>());
 builder.Services.AddIdentitySetup();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -92,18 +95,37 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseExceptionHandler("/error");
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowAll");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.Map("/error", (HttpContext httpContext) =>
+{
+    var feature = httpContext.Features.Get<IExceptionHandlerFeature>();
+    var exception = feature?.Error;
+
+    var problemDetails = new ProblemDetails
+    {
+        Status = StatusCodes.Status500InternalServerError,
+        Title = "An error occurred while processing your request.",
+        Detail = exception?.Message
+    };
+
+    return Results.Problem(problemDetails);
+});
 
 // Call the seeding method
 using (var scope = app.Services.CreateScope())
@@ -113,3 +135,4 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
