@@ -47,12 +47,6 @@ namespace UserManagement.API.Controllers
                 return Unauthorized();
             }
 
-            if (!await _userManager.IsEmailConfirmedAsync(user))
-            {
-                _logger.LogWarning("Email not confirmed for user: {UserId}", user.Id);
-                return Unauthorized("Email not confirmed.");
-            }
-
             _logger.LogInformation("User found: {UserId}", user.Id);
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             if (!result.Succeeded)
@@ -95,3 +89,4 @@ namespace UserManagement.API.Controllers
         }
     }
 }
+

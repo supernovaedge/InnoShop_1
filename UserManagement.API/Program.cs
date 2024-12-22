@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using ProductManagement.Application.Interfaces;
 using ProductManagement.Infrastructure.Repositories;
 using ProductManagement.Infrastructure.Data;
+using UserManagement.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,9 +59,7 @@ builder.Services.AddDbContext<ProductManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-builder.Services.AddIdentity<User, Role>()
-    .AddEntityFrameworkStores<UserManagementDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentitySetup();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddJwtConfiguration(builder.Configuration);
