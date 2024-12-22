@@ -1,4 +1,3 @@
-// File: UserManagement.Application/Services/DataSeeder.cs
 using Microsoft.AspNetCore.Identity;
 using UserManagement.Domain.Entities;
 using System;
@@ -9,9 +8,9 @@ namespace UserManagement.Application.Services
     public class DataSeeder
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
-        public DataSeeder(UserManager<User> userManager, RoleManager<Role> roleManager)
+        public DataSeeder(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -25,9 +24,10 @@ namespace UserManagement.Application.Services
             {
                 if (!await _roleManager.RoleExistsAsync(role))
                 {
-                    await _roleManager.CreateAsync(new Role { Name = role });
+                    await _roleManager.CreateAsync(new IdentityRole<Guid> { Name = role });
                 }
             }
         }
     }
 }
+

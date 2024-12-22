@@ -17,13 +17,15 @@ namespace UserManagement.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IEmailSender _emailSender;
         private readonly ProblemDetailsFactory _problemDetailsFactory;
 
-        public UsersController(IUserService userService, UserManager<User> userManager, IEmailSender emailSender, ProblemDetailsFactory problemDetailsFactory)
+        public UsersController(IUserService userService, UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager, IEmailSender emailSender, ProblemDetailsFactory problemDetailsFactory)
         {
             _userService = userService;
             _userManager = userManager;
+            _roleManager = roleManager;
             _emailSender = emailSender;
             _problemDetailsFactory = problemDetailsFactory;
         }
@@ -55,6 +57,12 @@ namespace UserManagement.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(_problemDetailsFactory.CreateValidationProblemDetails(HttpContext, ModelState));
+            }
+
+            var roleExists = await _roleManager.RoleExistsAsync(createUserDto.Role);
+            if (!roleExists)
+            {
+                return BadRequest(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status400BadRequest, $"Role {createUserDto.Role} does not exist."));
             }
 
             var user = new User
@@ -90,7 +98,7 @@ namespace UserManagement.API.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var confirmationLink = Url.Action(nameof(ConfirmEmail), "Users", new { userId = user.Id, token }, Request.Scheme);
 
-            var emailBody = $"Please confirm your account by clicking this link: <a href='{HtmlEncoder.Default.Encode(confirmationLink)}'>link</a>";
+            var emailBody = $"Please confirm your account by clicking this link: <a href='{HtmlEncoder.Default.Encode(confirmationLink ?? string.Empty)}'>link</a>";
 
             await _emailSender.SendEmailAsync(user.Email, "Confirm your email", emailBody);
 

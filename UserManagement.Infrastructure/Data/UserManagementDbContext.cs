@@ -5,7 +5,7 @@ using UserManagement.Domain.Entities;
 
 namespace UserManagement.Infrastructure.Data
 {
-    public class UserManagementDbContext : IdentityDbContext<User, Role, Guid>
+    public class UserManagementDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public UserManagementDbContext(DbContextOptions<UserManagementDbContext> options)
             : base(options)
@@ -22,7 +22,7 @@ namespace UserManagement.Infrastructure.Data
                 entity.ToTable(name: "Users");
             });
 
-            builder.Entity<Role>(entity =>
+            builder.Entity<IdentityRole<Guid>>(entity =>
             {
                 entity.ToTable(name: "Roles");
             });

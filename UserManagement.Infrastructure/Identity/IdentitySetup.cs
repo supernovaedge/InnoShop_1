@@ -9,7 +9,7 @@ namespace UserManagement.Infrastructure.Identity
     {
         public static IServiceCollection AddIdentitySetup(this IServiceCollection services)
         {
-            services.AddIdentity<User, Role>(options =>
+            services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 8;
@@ -25,7 +25,7 @@ namespace UserManagement.Infrastructure.Identity
                 options.SignIn.RequireConfirmedPhoneNumber = false;
             })
             .AddEntityFrameworkStores<UserManagementDbContext>()
-            .AddRoleManager<RoleManager<Role>>()
+            .AddRoleManager<RoleManager<IdentityRole<Guid>>>()
             .AddDefaultTokenProviders();
 
             return services;
