@@ -14,5 +14,6 @@ namespace ProductManagement.Application.Interfaces
         Task UpdateAsync(Product product);
         Task SoftDeleteByUserIdAsync(Guid id);
         Task RestoreByUserIdAsync(Guid id);
+        Task DeleteAsync(Guid id);
     }
 }
