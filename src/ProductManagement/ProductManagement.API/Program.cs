@@ -22,7 +22,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson() //System.Text.Json
+    .AddNewtonsoftJson()
     .AddFluentValidation(fv =>
     {
         fv.RegisterValidatorsFromAssemblyContaining<ProductUpdateDtoValidator>();

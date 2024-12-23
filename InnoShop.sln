@@ -2,33 +2,33 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.API", "UserManagement.API\UserManagement.API.csproj", "{8FDAA4ED-D7B1-4423-AC7E-308FFE17135C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.API", "src\UserManagement\UserManagement.API\UserManagement.API.csproj", "{8FDAA4ED-D7B1-4423-AC7E-308FFE17135C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.API", "ProductManagement.API\ProductManagement.API.csproj", "{2B1DFA63-E98F-476E-AF55-C8BA93889DE2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.API", "src\ProductManagement\ProductManagement.API\ProductManagement.API.csproj", "{2B1DFA63-E98F-476E-AF55-C8BA93889DE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Application", "UserManagement.Application\UserManagement.Application.csproj", "{B978A98C-0A1A-4684-8175-44C429A575E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Application", "src\UserManagement\UserManagement.Application\UserManagement.Application.csproj", "{B978A98C-0A1A-4684-8175-44C429A575E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Domain", "UserManagement.Domain\UserManagement.Domain.csproj", "{1359598E-EA4E-4E7C-9BE6-DCF5D1ECCD46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Domain", "src\UserManagement\UserManagement.Domain\UserManagement.Domain.csproj", "{1359598E-EA4E-4E7C-9BE6-DCF5D1ECCD46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Infrastructure", "UserManagement.Infrastructure\UserManagement.Infrastructure.csproj", "{F071A097-C594-4173-A838-DF2D1877B0A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Infrastructure", "src\UserManagement\UserManagement.Infrastructure\UserManagement.Infrastructure.csproj", "{F071A097-C594-4173-A838-DF2D1877B0A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Application", "ProductManagement.Application\ProductManagement.Application.csproj", "{80CA6902-B2F8-4950-A37B-E960B1B17EE4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Application", "src\ProductManagement\ProductManagement.Application\ProductManagement.Application.csproj", "{80CA6902-B2F8-4950-A37B-E960B1B17EE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Infrastructure", "ProductManagement.Infrastructure\ProductManagement.Infrastructure.csproj", "{C0E69793-C1E0-4236-9946-EDA27583079A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Infrastructure", "src\ProductManagement\ProductManagement.Infrastructure\ProductManagement.Infrastructure.csproj", "{C0E69793-C1E0-4236-9946-EDA27583079A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Domain", "ProductManagement.Domain\ProductManagement.Domain.csproj", "{4EA18FB7-7552-49F2-88FA-96F1476A0B13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Domain", "src\ProductManagement\ProductManagement.Domain\ProductManagement.Domain.csproj", "{4EA18FB7-7552-49F2-88FA-96F1476A0B13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Application.Tests", "ProductManagement.Application.Tests\ProductManagement.Application.Tests.csproj", "{EDD9FD24-6FF1-4139-971E-FB8A84E99F4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Application.Tests", "Tests\ProductManagement\ProductManagement.Application.Tests\ProductManagement.Application.Tests.csproj", "{EDD9FD24-6FF1-4139-971E-FB8A84E99F4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Application.Tests", "UserManagement.Application.Tests\UserManagement.Application.Tests.csproj", "{96969518-E8F9-4BC6-9FA0-8A8B29B0F259}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Application.Tests", "Tests\UserManagement\UserManagement.Application.Tests\UserManagement.Application.Tests.csproj", "{96969518-E8F9-4BC6-9FA0-8A8B29B0F259}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.API.Tests", "UserManagement.API.Tests\UserManagement.API.Tests.csproj", "{C1BEF134-CA07-4B2E-98CC-B3A93813B92B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.API.Tests", "Tests\UserManagement\UserManagement.API.Tests\UserManagement.API.Tests.csproj", "{C1BEF134-CA07-4B2E-98CC-B3A93813B92B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.API.Tests", "ProductManagement.API.Tests\ProductManagement.API.Tests.csproj", "{F4976F9E-A5BA-470C-B7C6-62F26BFE92F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.API.Tests", "Tests\ProductManagement\ProductManagement.API.Tests\ProductManagement.API.Tests.csproj", "{F4976F9E-A5BA-470C-B7C6-62F26BFE92F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Infrastructure.Tests", "UserManagement.Infrastructure.Tests\UserManagement.Infrastructure.Tests.csproj", "{CBC03852-CD97-478B-8A3C-AE8953731426}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.Infrastructure.Tests", "Tests\UserManagement\UserManagement.Infrastructure.Tests\UserManagement.Infrastructure.Tests.csproj", "{CBC03852-CD97-478B-8A3C-AE8953731426}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Infrastructure.Tests", "ProductManagement.Infrastructure.Tests\ProductManagement.Infrastructure.Tests.csproj", "{1246509F-5B81-48E5-A2D9-8623FBCF84F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductManagement.Infrastructure.Tests", "Tests\ProductManagement\ProductManagement.Infrastructure.Tests\ProductManagement.Infrastructure.Tests.csproj", "{1246509F-5B81-48E5-A2D9-8623FBCF84F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C918ADC-1519-48E7-A858-83DDAF594252}"
 EndProject
