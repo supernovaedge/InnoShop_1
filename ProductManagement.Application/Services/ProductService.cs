@@ -68,5 +68,14 @@ namespace ProductManagement.Application.Services
             var products = await _productRepository.SearchAsync(name, minPrice, maxPrice, availability);
             return _mapper.Map<IEnumerable<ProductReadDto>>(products);
         }
+        public async Task SoftDeleteByUserIdAsync(Guid userId)
+        {
+            await _productRepository.SoftDeleteByUserIdAsync(userId);
+        }
+
+        public async Task RestoreByUserIdAsync(Guid userId)
+        {
+            await _productRepository.RestoreByUserIdAsync(userId);
+        }
     }
 }

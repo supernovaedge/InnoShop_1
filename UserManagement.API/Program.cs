@@ -11,9 +11,6 @@ using UserManagement.Application.Mapping;
 using UserManagement.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using ProductManagement.Application.Interfaces;
-using ProductManagement.Infrastructure.Repositories;
-using ProductManagement.Infrastructure.Data;
 using UserManagement.Infrastructure.Identity;
 using FluentValidation.AspNetCore;
 using UserManagement.Application.Validators;
@@ -57,12 +54,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddDbContext<UserManagementDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<ProductManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentitySetup();
@@ -89,6 +83,12 @@ builder.Services.AddCors(options =>
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
+});
+
+// Register HttpClient
+builder.Services.AddHttpClient<IUserService, UserService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7153");
 });
 
 var app = builder.Build();
@@ -135,4 +135,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+
+
+
 

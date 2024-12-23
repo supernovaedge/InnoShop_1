@@ -72,7 +72,7 @@ namespace ProductManagement.Infrastructure.Repositories
         public async Task SoftDeleteByUserIdAsync(Guid userId)
         {
             var products = await _context.Products
-                .Where(p => p.UserId == userId && !p.IsDeleted)
+                .Where(p => p.UserId == userId)
                 .ToListAsync();
 
             foreach (var product in products)

@@ -17,12 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ProductManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+    
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson()
+    .AddNewtonsoftJson() //System.Text.Json
     .AddFluentValidation(fv =>
     {
         fv.RegisterValidatorsFromAssemblyContaining<ProductUpdateDtoValidator>();

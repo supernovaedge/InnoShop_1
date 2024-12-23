@@ -8,4 +8,6 @@ public interface IProductService
     Task<ProductReadDto> CreateProductAsync(ProductCreateDto productCreateDto, Guid userId);
     Task<bool> UpdateProductAsync(ProductUpdateDto productUpdateDto, Guid userId);
     Task<bool> DeleteProductAsync(Guid id, Guid userId);
+    Task SoftDeleteByUserIdAsync(Guid userId);
+    Task RestoreByUserIdAsync(Guid userId);
 }

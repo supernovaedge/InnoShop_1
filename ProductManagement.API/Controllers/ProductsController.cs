@@ -93,6 +93,26 @@ namespace ProductManagement.API.Controllers
             return Ok(products);
         }
 
+        [HttpPost("softdelete/{userId}")]
+        public async Task<IActionResult> SoftDeleteByUserId(Guid userId)
+        {
+            if (userId == Guid.Empty)
+                return Unauthorized(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status401Unauthorized, "Unauthorized"));
+
+            await _productService.SoftDeleteByUserIdAsync(userId);
+            return NoContent();
+        }
+
+        [HttpPost("restore/{userId}")]
+        public async Task<IActionResult> RestoreByUserId(Guid userId)
+        {
+            if (userId == Guid.Empty)
+                return Unauthorized(_problemDetailsFactory.CreateProblemDetails(HttpContext, StatusCodes.Status401Unauthorized, "Unauthorized"));
+
+            await _productService.RestoreByUserIdAsync(userId);
+            return NoContent();
+        }
+
         private Guid GetUserIdFromClaims()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -100,4 +120,6 @@ namespace ProductManagement.API.Controllers
         }
     }
 }
+
+
 

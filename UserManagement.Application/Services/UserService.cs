@@ -3,24 +3,31 @@ using UserManagement.Application.DTOs;
 using UserManagement.Application.Interfaces;
 using UserManagement.Core.Interfaces;
 using UserManagement.Domain.Entities;
-using ProductManagement.Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace UserManagement.Application.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
+        private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUserRepository userRepository, IProductRepository productRepository, IMapper mapper, ILogger<UserService> logger)
+        public UserService(HttpClient httpClient, IUserRepository userRepository, IMapper mapper, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
-            _productRepository = productRepository;
             _mapper = mapper;
             _logger = logger;
+            _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<UserDto> GetUserByIdAsync(Guid id)
@@ -56,15 +63,28 @@ namespace UserManagement.Application.Services
 
                 _logger.LogInformation($"User state changed: WasActive={wasActive}, IsActive={user.IsActive}");
 
-                if (wasActive && !user.IsActive)
+                var bearerToken = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+                if (!string.IsNullOrEmpty(bearerToken))
                 {
-                    _logger.LogInformation($"Soft deleting products for user {user.Id}");
-                    await _productRepository.SoftDeleteByUserIdAsync(user.Id);
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+
+                    if (wasActive && !user.IsActive)
+                    {
+                        _logger.LogInformation($"Soft deleting products for user {user.Id}");
+                        var response = await _httpClient.PostAsync($"/api/products/softdelete/{user.Id}", null);
+                        response.EnsureSuccessStatusCode();
+                    }
+                    else if (!wasActive && user.IsActive)
+                    {
+                        _logger.LogInformation($"Restoring products for user {user.Id}");
+                        var response = await _httpClient.PostAsync($"/api/products/restore/{user.Id}", null);
+                        response.EnsureSuccessStatusCode();
+                    }
                 }
-                else if (!wasActive && user.IsActive)
+                else
                 {
-                    _logger.LogInformation($"Restoring products for user {user.Id}");
-                    await _productRepository.RestoreByUserIdAsync(user.Id);
+                    _logger.LogWarning("Bearer token is missing from the Authorization header.");
                 }
             }
         }
