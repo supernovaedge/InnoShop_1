@@ -61,7 +61,7 @@ builder.Services.AddDbContext<UserManagementDbContext>(options =>
 
 builder.Services.AddIdentitySetup();
 
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 builder.Services.AddJwtConfiguration(builder.Configuration);
 
 // Register the EmailSender service

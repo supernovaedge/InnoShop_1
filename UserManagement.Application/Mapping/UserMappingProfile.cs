@@ -4,9 +4,9 @@ using UserManagement.Domain.Entities;
 
 namespace UserManagement.Application.Mapping
 {
-    public class MappingProfile : Profile
+    public class UserMappingProfile : Profile
     {
-        public MappingProfile()
+        public UserMappingProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<CreateUserDto, User>();

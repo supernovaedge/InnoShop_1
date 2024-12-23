@@ -4,9 +4,9 @@ using ProductManagement.Domain.Entities;
 
 namespace ProductManagement.Application.Mapping
 {
-    public class ProductProfile : Profile
+    public class ProductMappingProfile : Profile
     {
-        public ProductProfile()
+        public ProductMappingProfile()
         {
             CreateMap<ProductCreateDto, Product>();
             CreateMap<ProductUpdateDto, Product>();
